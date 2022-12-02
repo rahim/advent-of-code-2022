@@ -22,13 +22,15 @@ pub fn most_calories_for_an_elf(input: &str) -> u32 {
     return *totals_for_each_elf.iter().max().unwrap();
 }
 
+pub fn calories_for_top_three_elves(input: &str) -> u32 {
+    return 0;
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    #[test]
-    fn test_most_calories_for_an_elf() {
-        let input = "1000
+    const input: &str = "1000
 2000
 3000
 
@@ -42,7 +44,16 @@ mod tests {
 9000
 
 10000";
+
+    #[test]
+    fn test_most_calories_for_an_elf() { 
         let result = most_calories_for_an_elf(input);
         assert_eq!(result, 24000)
+    }
+
+    #[test]
+    fn test_calories_for_top_three_elves() {
+        let result = calories_for_top_three_elves(input);
+        assert_eq!(result, 45000)
     }
 }
