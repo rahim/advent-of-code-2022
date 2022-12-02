@@ -10,14 +10,15 @@ pub fn most_calories_for_an_elf(input: &str) -> u32 {
 }
 
 fn totals_for_each_elf(input: &str) -> Vec<u32> {
-  calorie_collection_for_each_elf(input)
+    calorie_collection_for_each_elf(input)
         .iter()
         .map(|c| c.iter().sum::<u32>())
         .collect()
 }
 
 fn calorie_collection_for_each_elf(input: &str) -> Vec<Vec<u32>> {
-    input.split("\n\n")
+    input
+        .split("\n\n")
         .map(|s| s.lines().map(|x: &str| x.parse::<u32>().unwrap()).collect())
         .collect()
 }
@@ -46,7 +47,7 @@ mod tests {
 10000";
 
     #[test]
-    fn test_most_calories_for_an_elf() { 
+    fn test_most_calories_for_an_elf() {
         let result = most_calories_for_an_elf(EXAMPLE_INPUT);
         assert_eq!(result, 24000)
     }
