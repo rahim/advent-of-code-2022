@@ -1,5 +1,8 @@
+use std::fs;
 fn main() {
-    println!("Hello, world!");
+    let path = "elven-list.txt";
+    let contents = fs::read_to_string(path).expect("Failed to read file");
+    println!("Most calories: {}", most_calories_for_an_elf(&contents))
 }
 
 pub fn most_calories_for_an_elf(input: &str) -> u32 {
