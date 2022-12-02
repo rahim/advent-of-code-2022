@@ -24,7 +24,7 @@ fn calorie_collection_for_each_elf(input: &str) -> Vec<Vec<u32>> {
 }
 
 pub fn calories_for_top_three_elves(input: &str) -> u32 {
-    return 0;
+    totals_for_each_elf(input).iter().rev().take(3).sum()
 }
 
 #[cfg(test)]
