@@ -2,18 +2,24 @@ use std::fs;
 fn main() {
     let path = "elven-list.txt";
     let contents = fs::read_to_string(path).expect("Failed to read file");
-    println!("Most calories: {}", most_calories_for_an_elf(&contents))
+    println!("Most calories: {}", most_calories_for_an_elf(&contents));
+    println!(
+        "Calories for top three elves: {}",
+        calories_for_top_three_elves(&contents)
+    );
 }
 
 pub fn most_calories_for_an_elf(input: &str) -> u32 {
-    return *totals_for_each_elf(input).iter().max().unwrap();
+    return *sorted_totals_for_each_elf(input).iter().max().unwrap();
 }
 
-fn totals_for_each_elf(input: &str) -> Vec<u32> {
-    calorie_collection_for_each_elf(input)
+fn sorted_totals_for_each_elf(input: &str) -> Vec<u32> {
+    let mut totals = calorie_collection_for_each_elf(input)
         .iter()
         .map(|c| c.iter().sum::<u32>())
-        .collect()
+        .collect::<Vec<u32>>();
+    totals.sort();
+    return totals;
 }
 
 fn calorie_collection_for_each_elf(input: &str) -> Vec<Vec<u32>> {
@@ -24,7 +30,7 @@ fn calorie_collection_for_each_elf(input: &str) -> Vec<Vec<u32>> {
 }
 
 pub fn calories_for_top_three_elves(input: &str) -> u32 {
-    totals_for_each_elf(input).iter().rev().take(3).sum()
+    sorted_totals_for_each_elf(input).iter().rev().take(3).sum()
 }
 
 #[cfg(test)]
