@@ -6,20 +6,20 @@ fn main() {
 }
 
 pub fn most_calories_for_an_elf(input: &str) -> u32 {
-    let list_for_each_elf: Vec<&str> = input.split("\n\n").collect();
-    let calorie_collection_for_each_elf: Vec<Vec<u32>> = list_for_each_elf
-        .iter()
-        .map(|&s| s.lines().map(|x: &str| x.parse::<u32>().unwrap()).collect())
-        .collect();
-    println!("{:#?}", calorie_collection_for_each_elf);
+    return *totals_for_each_elf(input).iter().max().unwrap();
+}
 
-    let totals_for_each_elf: Vec<u32> = calorie_collection_for_each_elf
+fn totals_for_each_elf(input: &str) -> Vec<u32> {
+  calorie_collection_for_each_elf(input)
         .iter()
         .map(|c| c.iter().sum::<u32>())
-        .collect();
-    println!("{:#?}", totals_for_each_elf);
+        .collect()
+}
 
-    return *totals_for_each_elf.iter().max().unwrap();
+fn calorie_collection_for_each_elf(input: &str) -> Vec<Vec<u32>> {
+    input.split("\n\n")
+        .map(|s| s.lines().map(|x: &str| x.parse::<u32>().unwrap()).collect())
+        .collect()
 }
 
 pub fn calories_for_top_three_elves(input: &str) -> u32 {
