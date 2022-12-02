@@ -30,7 +30,7 @@ pub fn calories_for_top_three_elves(input: &str) -> u32 {
 mod tests {
     use super::*;
 
-    const input: &str = "1000
+    const EXAMPLE_INPUT: &str = "1000
 2000
 3000
 
@@ -47,13 +47,13 @@ mod tests {
 
     #[test]
     fn test_most_calories_for_an_elf() { 
-        let result = most_calories_for_an_elf(input);
+        let result = most_calories_for_an_elf(EXAMPLE_INPUT);
         assert_eq!(result, 24000)
     }
 
     #[test]
     fn test_calories_for_top_three_elves() {
-        let result = calories_for_top_three_elves(input);
+        let result = calories_for_top_three_elves(EXAMPLE_INPUT);
         assert_eq!(result, 45000)
     }
 }
