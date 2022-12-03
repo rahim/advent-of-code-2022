@@ -16,8 +16,8 @@ mod tests {
     use indoc::indoc;
     
     const EXAMPLE_INPUT: &str = indoc! {"
-    A Y
-    B X
+        A Y
+        B X
         C Z
     "};
 
