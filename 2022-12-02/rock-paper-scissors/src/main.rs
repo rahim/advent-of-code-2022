@@ -8,6 +8,7 @@ fn main() {
 
 pub fn expected_guide_score(input: &str) -> u32 {
     let rounds = parse_guide(input);
+    println!("rounds: {}", rounds.len());
     rounds.iter()
         .map(|r| r.score())
         .sum()
@@ -74,7 +75,7 @@ impl Round {
     }
 
     fn shape_score(&self) -> u32 {
-        match self.p1 {
+        match self.p2 {
             Play::Rock => 1,
             Play::Paper => 2,
             Play::Scissors => 3,
@@ -82,7 +83,7 @@ impl Round {
     }
 
     fn outcome_score(&self) -> u32 {
-        match self.p1.against(&self.p2) {
+        match self.p2.against(&self.p1) {
             Result::Loss => 0,
             Result::Draw => 3,
             Result::Win => 6,
@@ -122,23 +123,35 @@ mod tests {
 
     #[test]
     fn test_shape_score() {
-        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper}.shape_score(), 1);
-        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper}.shape_score(), 2);
-        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper}.shape_score(), 3);
+        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper    }.shape_score(), 2);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper    }.shape_score(), 2);
+        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper    }.shape_score(), 2);
+
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Rock     }.shape_score(), 1);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper    }.shape_score(), 2);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Scissors }.shape_score(), 3);
     }
 
     #[test]
     fn test_outcome_score() {
-        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper}.outcome_score(), 0);
-        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper}.outcome_score(), 3);
-        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper}.outcome_score(), 6);
+        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper    }.outcome_score(), 6);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper    }.outcome_score(), 3);
+        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper    }.outcome_score(), 0);
+
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Rock     }.outcome_score(), 0);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper    }.outcome_score(), 3);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Scissors }.outcome_score(), 6);
     }
 
     #[test]
     fn test_score() {
-        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper}.score(), 1);
-        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper}.score(), 5);
-        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper}.score(), 9);
+        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper    }.score(), 8);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper    }.score(), 5);
+        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper    }.score(), 2);
+
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Rock     }.score(), 1);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper    }.score(), 5);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Scissors }.score(), 9);
     }
 
     #[test]
