@@ -59,7 +59,11 @@ impl Round {
     }
 
     fn outcome_score(&self) -> u8 {
-        0
+        match self.p1.against(&self.p2) {
+            Result::Loss => 0,
+            Result::Draw => 3,
+            Result::Win => 6,
+        }
     }
 } 
 
