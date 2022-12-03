@@ -7,7 +7,20 @@ fn main() {
 }
 
 pub fn expected_guide_score(input: &str) -> u32 {
-    return 0;
+    let rounds = parse_guide(input);
+    rounds.iter()
+        .map(|r| r.score())
+        .sum()
+}
+
+fn parse_guide(input: &str) -> Vec<Round> {
+    input.lines()
+        .map(|l: &str| {
+            let play1 = Play::from_char(l.chars().nth(0).unwrap());
+            let play2 = Play::from_char(l.chars().nth(2).unwrap());
+            Round{p1: play1, p2: play2}
+        })
+        .collect()
 }
 
 #[derive(PartialEq, Debug)]
@@ -25,6 +38,15 @@ enum Result {
 }
 
 impl Play {
+    fn from_char(c: char) -> Play {
+        match c {
+            'A' | 'X' => Play::Rock,
+            'B' | 'Y' => Play::Paper,
+            'C' | 'Z' => Play::Scissors,
+            _ => unreachable!()
+        }
+    }
+
     fn against(&self, other: &Play) -> Result {
         if *self == *other {
             return Result::Draw;
@@ -40,17 +62,18 @@ impl Play {
     }
 }
 
+#[derive(Debug, PartialEq)]
 struct Round {
     p1: Play,
     p2: Play
 }
 
 impl Round {
-    fn score(&self) -> u8 {
-        0
+    fn score(&self) -> u32 {
+        self.shape_score() + self.outcome_score()
     }
 
-    fn shape_score(&self) -> u8 {
+    fn shape_score(&self) -> u32 {
         match self.p1 {
             Play::Rock => 1,
             Play::Paper => 2,
@@ -58,7 +81,7 @@ impl Round {
         }
     }
 
-    fn outcome_score(&self) -> u8 {
+    fn outcome_score(&self) -> u32 {
         match self.p1.against(&self.p2) {
             Result::Loss => 0,
             Result::Draw => 3,
@@ -85,6 +108,19 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_input() {
+        let result: Vec<Round> = parse_guide(EXAMPLE_INPUT);
+        assert_eq!(
+            result,
+            vec![
+                Round{p1: Play::Rock, p2: Play::Paper},
+                Round{p1: Play::Paper, p2: Play::Rock},
+                Round{p1: Play::Scissors, p2: Play::Scissors}
+            ]
+        )
+    }
+
+    #[test]
     fn test_shape_score() {
         assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper}.shape_score(), 1);
         assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper}.shape_score(), 2);
@@ -96,6 +132,13 @@ mod tests {
         assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper}.outcome_score(), 0);
         assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper}.outcome_score(), 3);
         assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper}.outcome_score(), 6);
+    }
+
+    #[test]
+    fn test_score() {
+        assert_eq!(Round{p1: Play::Rock,     p2: Play::Paper}.score(), 1);
+        assert_eq!(Round{p1: Play::Paper,    p2: Play::Paper}.score(), 5);
+        assert_eq!(Round{p1: Play::Scissors, p2: Play::Paper}.score(), 9);
     }
 
     #[test]
