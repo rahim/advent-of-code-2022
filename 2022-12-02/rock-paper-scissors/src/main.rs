@@ -3,18 +3,18 @@ fn main() {
     let path = "strategy-guide.txt";
     let contents = fs::read_to_string(path).expect("Failed to read file");
 
-    println!("Expected guide score: {}", expected_guide_score(&contents));
+    println!("Expected guide score: {}", expected_guide_score_pt1(&contents));
 }
 
-pub fn expected_guide_score(input: &str) -> u32 {
-    let rounds = parse_guide(input);
+pub fn expected_guide_score_pt1(input: &str) -> u32 {
+    let rounds = parse_guide_pt1(input);
     println!("rounds: {}", rounds.len());
     rounds.iter()
         .map(|r| r.score())
         .sum()
 }
 
-fn parse_guide(input: &str) -> Vec<Round> {
+fn parse_guide_pt1(input: &str) -> Vec<Round> {
     input.lines()
         .map(|l: &str| {
             let play1 = Play::from_char(l.chars().nth(0).unwrap());
@@ -104,13 +104,13 @@ mod tests {
 
     #[test]
     fn test_expected_guide_score() {
-        let result = expected_guide_score(EXAMPLE_INPUT);
+        let result = expected_guide_score_pt1(EXAMPLE_INPUT);
         assert_eq!(result, 15)
     }
 
     #[test]
     fn test_parse_input() {
-        let result: Vec<Round> = parse_guide(EXAMPLE_INPUT);
+        let result: Vec<Round> = parse_guide_pt1(EXAMPLE_INPUT);
         assert_eq!(
             result,
             vec![
