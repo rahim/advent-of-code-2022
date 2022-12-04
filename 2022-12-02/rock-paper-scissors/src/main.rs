@@ -3,7 +3,8 @@ fn main() {
     let path = "strategy-guide.txt";
     let contents = fs::read_to_string(path).expect("Failed to read file");
 
-    println!("Expected guide score: {}", expected_guide_score_pt1(&contents));
+    println!("Expected guide score pt1: {}", expected_guide_score_pt1(&contents));
+    println!("Expected guide score pt2: {}", expected_guide_score_pt2(&contents));
 }
 
 pub fn expected_guide_score_pt1(input: &str) -> u32 {
@@ -15,6 +16,24 @@ pub fn expected_guide_score_pt1(input: &str) -> u32 {
 }
 
 fn parse_guide_pt1(input: &str) -> Vec<Round> {
+    input.lines()
+        .map(|l: &str| {
+            let play1 = Play::from_char(l.chars().nth(0).unwrap());
+            let play2 = Play::from_char(l.chars().nth(2).unwrap());
+            Round{p1: play1, p2: play2}
+        })
+        .collect()
+}
+
+pub fn expected_guide_score_pt2(input: &str) -> u32 {
+    let rounds = parse_guide_pt2(input);
+    println!("rounds: {}", rounds.len());
+    rounds.iter()
+        .map(|r| r.score())
+        .sum()
+}
+
+fn parse_guide_pt2(input: &str) -> Vec<Round> {
     input.lines()
         .map(|l: &str| {
             let play1 = Play::from_char(l.chars().nth(0).unwrap());
@@ -36,6 +55,17 @@ enum Result {
     Win,
     Draw,
     Loss,
+}
+
+impl Result {
+    fn from_char(c: char) -> Result {
+        match c {
+            'X' => Result::Loss,
+            'Y' => Result::Draw,
+            'Z' => Result::Win,
+            _ => unreachable!()
+        }
+    }
 }
 
 impl Play {
@@ -103,13 +133,13 @@ mod tests {
     "};
 
     #[test]
-    fn test_expected_guide_score() {
+    fn test_expected_guide_score_pt1() {
         let result = expected_guide_score_pt1(EXAMPLE_INPUT);
         assert_eq!(result, 15)
     }
 
     #[test]
-    fn test_parse_input() {
+    fn test_parse_parse_guide_pt1() {
         let result: Vec<Round> = parse_guide_pt1(EXAMPLE_INPUT);
         assert_eq!(
             result,
@@ -117,6 +147,25 @@ mod tests {
                 Round{p1: Play::Rock, p2: Play::Paper},
                 Round{p1: Play::Paper, p2: Play::Rock},
                 Round{p1: Play::Scissors, p2: Play::Scissors}
+            ]
+        )
+    }
+
+    #[test]
+    fn test_expected_guide_score_pt2() {
+        let result = expected_guide_score_pt2(EXAMPLE_INPUT);
+        assert_eq!(result, 12)
+    }
+
+    #[test]
+    fn test_parse_guide_pt2() {
+        let result: Vec<Round> = parse_guide_pt2(EXAMPLE_INPUT);
+        assert_eq!(
+            result,
+            vec![
+                Round{p1: Play::Rock, p2: Play::Rock},
+                Round{p1: Play::Paper, p2: Play::Scissors},
+                Round{p1: Play::Scissors, p2: Play::Rock}
             ]
         )
     }
