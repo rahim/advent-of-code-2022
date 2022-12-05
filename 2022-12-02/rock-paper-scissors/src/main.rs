@@ -37,13 +37,14 @@ fn parse_guide_pt2(input: &str) -> Vec<Round> {
     input.lines()
         .map(|l: &str| {
             let play1 = Play::from_char(l.chars().nth(0).unwrap());
-            let play2 = Play::from_char(l.chars().nth(2).unwrap());
-            Round{p1: play1, p2: play2}
+            let result = Result::from_char(l.chars().nth(2).unwrap());
+            RoundObjective{p1: play1, result: result}
         })
+        .map(|objective| objective.implied_round() )
         .collect()
 }
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 enum Play {
     Rock,
     Paper,
@@ -119,7 +120,39 @@ impl Round {
             Result::Win => 6,
         }
     }
-} 
+}
+
+#[derive(Debug, PartialEq)]
+struct RoundObjective {
+    p1: Play,
+    result: Result
+}
+
+impl RoundObjective {
+    fn implied_play(&self) -> Play {
+        match self.result {
+            Result::Draw => self.p1,
+            Result::Win => {
+                match self.p1 {
+                    Play::Rock => Play::Paper,
+                    Play::Paper => Play::Scissors,
+                    Play::Scissors => Play::Rock,
+                }
+            }
+            Result::Loss => {
+                match self.p1 {
+                    Play::Rock => Play::Scissors,
+                    Play::Paper => Play::Rock,
+                    Play::Scissors => Play::Paper,
+                }
+            }
+        }
+    }
+
+    fn implied_round(&self) -> Round {
+        Round{p1: self.p1, p2: self.implied_play()}
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -164,7 +197,7 @@ mod tests {
             result,
             vec![
                 Round{p1: Play::Rock, p2: Play::Rock},
-                Round{p1: Play::Paper, p2: Play::Scissors},
+                Round{p1: Play::Paper, p2: Play::Rock},
                 Round{p1: Play::Scissors, p2: Play::Rock}
             ]
         )
