@@ -34,7 +34,7 @@ fn parse_input(input: &str) -> Vec<Backpack> {
 }
 
 fn parse_input_to_groups(input: &str) -> Vec<Group> {
-    return parse_input(input).chunks(3).map(|x| (x[0],x[1],x[2])).collect();
+    return parse_input(input).chunks(3).map(|x| (x[0].clone(),x[1].clone(),x[2].clone())).collect();
 }
 
 fn parse_backpack(line: &str) -> Backpack {
@@ -49,8 +49,8 @@ trait Badged {
 }
 impl Badged for Group {
     fn badge(&self) -> char {
-        let commonFirstAndSecond: HashSet<char> = (self.0).intersection(&self.1).copied().collect();
-        let common: HashSet<char> = (commonFirstAndSecond).intersection(&self.2).copied().collect();
+        let common_first_and_second: HashSet<char> = (self.0).intersection(&self.1).copied().collect();
+        let common: HashSet<char> = (common_first_and_second).intersection(&self.2).copied().collect();
         assert!(common.len() == 1, "Group expected to contain one and only one badge");
         return *common.iter().next().unwrap();
     }
