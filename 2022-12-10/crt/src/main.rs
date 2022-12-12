@@ -1,4 +1,5 @@
 use std::fs;
+use std::io::{self, Write};
 
 fn main() {
     let path = "input.txt";
@@ -10,6 +11,12 @@ fn main() {
         "Signal strength sum: {}",
         cpu.signal_strength_sum()
     );
+
+    let mut cpu_b = CPU::new(&instructions);
+    let mut crt = CRT::new();
+        
+    Runner::cycle(&mut cpu_b, &mut crt, 240);
+    println!("{}", crt.print());
 }
 
 fn parse_input(input: &str) -> Vec<Instruction> {
@@ -80,6 +87,56 @@ impl CPU {
         for _i in 1..=40 { self.cycle(); }
         sum += self.signal_strength();
         return sum;
+    }
+}
+
+struct CRT {
+    pixels: Vec<bool>,
+    completed_cycles: i32
+}
+
+impl CRT {
+    const PIXEL_COUNT:usize = 240;
+    const ROW_SIZE:usize = 40;
+
+    fn new() -> CRT {
+        CRT {
+            pixels: vec![false; CRT::PIXEL_COUNT],
+            completed_cycles: 0
+        }
+    }
+
+    fn matrix(&self) -> Vec<Vec<bool>> {
+        return self.pixels.chunks(CRT::ROW_SIZE).map(|chunk| chunk.to_vec()).collect();
+    }
+
+    fn cycle(&mut self, x: i32) -> () {
+        let sprite_window = x-1..=(x+1);
+        if sprite_window.contains(&(self.completed_cycles % (CRT::ROW_SIZE as i32)) ) {
+            self.pixels[self.completed_cycles as usize] = true;
+        }
+        self.completed_cycles += 1;
+    }
+
+    fn print(&self) -> String {
+        self.matrix().iter()
+            .map(|row| {
+                row.iter().map(|col| if *col {'#'} else {'.'} ).collect::<String>()
+            })
+            .collect::<Vec<String>>()
+            .join("\n")
+    }
+}
+
+struct Runner {
+}
+
+impl Runner {
+    fn cycle(cpu: &mut CPU, crt: &mut CRT, cycles: i32) {
+        for _i in 0..cycles {
+            crt.cycle(cpu.x);
+            cpu.cycle();
+        }
     }
 }
 
@@ -166,6 +223,39 @@ mod tests {
         let instructions = parse_input(BIG_EXAMPLE);
         let mut cpu = CPU::new(&instructions);
         assert_eq!(cpu.signal_strength_sum(), 13140);
+    }
+
+    #[test]
+    fn test_crt_print() {
+        let crt = CRT::new();
+        let empty_crt: &str = indoc! {"
+            ........................................
+            ........................................
+            ........................................
+            ........................................
+            ........................................
+            ........................................
+        "};
+        assert_eq!(crt.print(), empty_crt.trim());
+    }
+
+    #[test]
+    fn test_example_run() {
+        let instructions = parse_input(BIG_EXAMPLE);
+        let mut cpu = CPU::new(&instructions);
+        let mut crt = CRT::new();
+        
+        Runner::cycle(&mut cpu, &mut crt, 240);
+
+        let expected_image: &str = indoc! {"
+            ##..##..##..##..##..##..##..##..##..##..
+            ###...###...###...###...###...###...###.
+            ####....####....####....####....####....
+            #####.....#####.....#####.....#####.....
+            ######......######......######......####
+            #######.......#######.......#######.....
+        "};
+        assert_eq!(crt.print(), expected_image.trim());
     }
 
     const BIG_EXAMPLE: &str = indoc! {"
